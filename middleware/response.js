@@ -21,6 +21,7 @@ module.exports = (req, res, next) => {
     req.customError = (message, status) => {
         let err = new Error(message)
         err.status = status
+        return err
     }
 
     return next() // use next to go next router
