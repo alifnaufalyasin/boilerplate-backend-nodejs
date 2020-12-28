@@ -1,23 +1,17 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-const dotenv = require('dotenv').config()
+require('dotenv').config()
 const cors = require('cors')
+require('./middleware/auth')
 
 const response = require('./middleware/response')
+const flamelinkApp = require('./config/flamelinkSDK')
 
 // cors
 var allowedOrigins = [
-  "http://127.0.0.1:5501",
   "http://localhost:3000",
-  "http://localhost:1000",
-  "http://localhost:8080",
-  "http://localhost",
-  "https://icyption.aliven.my.id",
-  "http://icyption.aliven.my.id",
-  "http://icyption.telkomuniversity.ac.id",
-  "https://icyption.telkomuniversity.ac.id",
-  "icyption.telkomuniversity.ac.id"
+  "http://localhost"
 ]
 
 app.use(
@@ -38,17 +32,16 @@ app.use(
 app.use(cors())
 
 // middleware
-app.use(bodyParser.urlencoded({extended : true}))
-app.use(bodyParser.json())
+app.use(express.urlencoded({extended : true}))
+app.use(express.json())
 app.use(response)
 
 // router
-const userRoute = require('./routes/user')
 
 app.get('/', function(req,res){
   res.send('Hello')
 })
-app.use('/api/users' , userRoute)
+
 
 // error handling
 app.use((req,res,next) => {
@@ -58,12 +51,11 @@ app.use((req,res,next) => {
 })
 
 app.use(async (err,req,res,next) => {
-  deleteFoto(req)
+  // deleteFoto(req)
   const {message} = err
   const status = err.status || 500
   console.log(err)
-  // response(res,false,null,message,status)
-  res.sendError(err,message,status)
+  res.sendError(null,message,status)
 })
 
 
